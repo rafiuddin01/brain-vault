@@ -1,44 +1,59 @@
 // src/utils/mailer.js
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: Number(process.env.EMAIL_PORT) || 587,
-  secure: Number(process.env.EMAIL_PORT) === 465, // true for 465, false for 587
+  secure: Number(process.env.EMAIL_PORT) === 465,
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    pass: process.env.EMAIL_PASS,
   },
-  // helpful for dev when TLS issues happen; remove in prod
-  tls: { rejectUnauthorized: false }
-});
-
-transporter.verify().then(() => {
-  console.log('Mailer: SMTP connection OK');
-}).catch(err => {
-  console.error('Mailer verification failed:', err);
+  tls: {
+    rejectUnauthorized: false,
+  },
 });
 
 async function sendVerificationEmail(to, code) {
   const verifyUrl = `${process.env.FRONTEND_URL}/verify`;
+
   const html = `
-    <p>Hello — your verification code is <b>${code}</b></p>
-    <p>Or click to verify: <a href="${verifyUrl}?email=${encodeURIComponent(to)}&code=${code}">Verify</a></p>
-    <p>This code expires in 30 minutes.</p>
+    <h2>BrainVault Email Verification</h2>
+    <p>Hello,</p>
+
+    <p>Your verification code is:</p>
+
+    <h1 style="letter-spacing:3px;">${code}</h1>
+
+    <p>Or click the link below to verify your account:</p>
+
+    <p>
+      <a href="${verifyUrl}?email=${encodeURIComponent(
+        to
+      )}&code=${code}">
+        Verify Email
+      </a>
+    </p>
+
+    <p>This code expires in <strong>30 minutes</strong>.</p>
+
+    <p>Thank you,<br>BrainVault Team</p>
   `;
 
   try {
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"BrainVault" <${process.env.EMAIL_USER}>`,
       to,
-      subject: 'BrainVault - Email verification',
-      html
+      subject: "BrainVault - Email Verification",
+      html,
     });
-    console.log('Verification email sent:', info.messageId);
+
+    console.log("Verification email sent:", info.messageId);
     return info;
   } catch (err) {
-    console.error('sendVerificationEmail error:', err);
+    console.error("sendVerificationEmail error:", err);
     throw err;
   }
 }
