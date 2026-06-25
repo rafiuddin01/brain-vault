@@ -86,7 +86,23 @@ FRONTEND_URL=http://localhost:5173
 ## Author
 
 Mohammed Rafiuddin
+## 📸 Screenshots
 
+### Register Page
+
+![Register](screenshots/register.png)
+
+### Login Page
+
+![Login](screenshots/login.png)
+
+### Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+### Notes Management
+
+![Notes](screenshots/notes.png)
 ## Future Enhancements
 
 * Edit Notes
